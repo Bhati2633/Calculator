@@ -122,42 +122,10 @@ class _CalculatorHomeState extends State<CalculatorHome> {
             Expanded(
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildButton('7'),
-                      buildButton('8'),
-                      buildButton('9'),
-                      buildButton('/'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildButton('4'),
-                      buildButton('5'),
-                      buildButton('6'),
-                      buildButton('*'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildButton('1'),
-                      buildButton('2'),
-                      buildButton('3'),
-                      buildButton('-'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildButton('0'),
-                      buildButton('.'),
-                      buildButton('C', isClear: true),
-                      buildButton('+'),
-                    ],
-                  ),
+                  buildButtonRow(['7', '8', '9', '/']),
+                  buildButtonRow(['4', '5', '6', '*']),
+                  buildButtonRow(['1', '2', '3', '-']),
+                  buildButtonRow(['0', '.', 'C', '+']),
                 ],
               ),
             ),
@@ -175,26 +143,40 @@ class _CalculatorHomeState extends State<CalculatorHome> {
     );
   }
 
-  Widget buildButton(String value, {bool isClear = false}) {
-    return ElevatedButton(
-      onPressed: () {
-        if (isClear) {
-          resetCalculator();
-          displayText = '';
-        } else if (['+', '-', '*', '/'].contains(value)) {
-          setOperator(value);
-        } else {
-          appendToDisplay(value);
-        }
-      },
-      child: Text(
-        value,
-        style: TextStyle(fontSize: 24, color: Colors.white),
+  // Helper to build button rows
+  Widget buildButtonRow(List<String> values) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: values.map((value) => buildButton(value, isClear: value == 'C')).toList(),
       ),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.all(20),
-        shape: CircleBorder(),
-        backgroundColor: isClear ? Colors.red : Colors.deepPurpleAccent, // Button colors
+    );
+  }
+
+  Widget buildButton(String value, {bool isClear = false}) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: () {
+            if (isClear) {
+              resetCalculator();
+              displayText = '';
+            } else if (['+', '-', '*', '/'].contains(value)) {
+              setOperator(value);
+            } else {
+              appendToDisplay(value);
+            }
+          },
+          child: Text(
+            value,
+            style: TextStyle(fontSize: 24, color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            backgroundColor: isClear ? Colors.red : Colors.deepPurpleAccent, // Button colors
+          ),
+        ),
       ),
     );
   }
